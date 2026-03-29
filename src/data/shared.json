@@ -1,0 +1,195 @@
+{
+	"SandboxMode": [["text", "string"]],
+	"CastleMode": [["text", "string"]],
+	"DominationMode": [
+		["score", "always"],
+		["state_key", "key"],
+		["text", "string"],
+		["winner", "int"]
+	],
+	"BattleRoyaleMode": [
+		["state_key", "key"],
+		["text", "string"],
+		["radius", "int"]
+	],
+	"update": [
+		["queue", "always"],
+		["entities", "always"],
+		["sharedKeys", "notempty"]
+	],
+	"private_data": [
+		["tx", "int"],
+		["ty", "int"],
+		["score", "int"]
+	],
+	"Tribesman": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["group_sid", "int"],
+		["health", "float"],
+		["equipment", "int"],
+		["occupation", "int"],
+		["status", "int"],
+		["x", "int"],
+		["y", "int"],
+		["parent_sid", "int"]
+	],
+	"Tribe": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["team", "int"],
+		["score", "int"],
+		["name", "string"],
+		["stay", "bool"]
+	],
+	"Castle": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["name", "string"],
+		["score", "int"],
+		["team", "int"]
+	],
+	"Building": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["key", "key"],
+		["health", "int"],
+		["node_sid", "int"],
+		["angle", "float"],
+		["state_key", "key"],
+		["connections", "int"],
+		["counter", "int"],
+		["team", "int"],
+		["float1", "float"],
+		["key1", "key"],
+		["int1", "int"],
+		["cooldown", "float"],
+		["operator_sid", "int"]
+	],
+	"Animal": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["group_sid", "int"],
+		["health", "float"],
+		["occupation", "int"],
+		["status", "int"],
+		["kind", "key"],
+		["x", "int"],
+		["y", "int"]
+	],
+	"Herd": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"]
+	],
+	"Monster": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["group_sid", "int"],
+		["x", "int"],
+		["y", "int"],
+		["health", "int"],
+		["occupation", "int"]
+	],
+	"Campfire": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["state", "bool"]
+	],
+	"Tree": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["parent_sid", "int"],
+		["state", "int"],
+		["x", "int"],
+		["y", "int"]
+	],
+	"Plant": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["key", "key"],
+		["grown", "float"]
+	],
+	"Meadow": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["radius", "int"],
+		["grass", "int"],
+		["team", "int"],
+		["water", "float"]
+	],
+	"Rocks": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["parent_sid", "int"],
+		["count", "int"]
+	],
+	"Mushroom": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["parent_sid", "int"],
+		["key", "int"]
+	],
+	"Collectible": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["x", "int"],
+		["y", "int"],
+		["from", "int"],
+		["key", "key"]
+	],
+	"Cloud": [
+		["sid", "always"],
+		["constructorName", "key"],
+		["remove", "bool", "_remove"],
+		["sharedX", "int"],
+		["sharedY", "int"],
+		["target_sid", "int"]
+	],
+	"hit": [
+		["entity", "int"],
+		["hull", "float"],
+		["direction", "float"]
+	],
+	"resources": [
+		["food", "int"],
+		["wood", "int"],
+		["gold", "int"],
+		["water", "int"]
+	],
+	"invent": [["key", "key"]],
+	"operate": [
+		["sid", "int"],
+		["int1", "int"],
+		["int2", "int"],
+		["float1", "float"],
+		["float2", "float"]
+	]
+}

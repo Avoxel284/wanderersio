@@ -1,0 +1,20 @@
+{
+	"fighter": {
+		"damage": 1,
+		"sprite": [3, 2, 19, 17],
+		"range": 200,
+		"armor": 0,
+		"size": 0,
+		"cooldown": 1.0,
+		"maxHull": 10
+	},
+	"transporter": {
+		"damage": 1,
+		"sprite": [25, 0, 18, 21],
+		"range": 200,
+		"armor": 0,
+		"size": 0,
+		"cooldown": 1.5,
+		"maxHull": 20
+	}
+}

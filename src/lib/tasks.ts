@@ -1,0 +1,25 @@
+const tasks = {
+	IDLE: 0,
+	FIGHT: 1,
+	LOOT: 2,
+	RECOVER: 3,
+	CAMP: 4,
+	HUNT: 5,
+	LEAD: 6,
+	COLLECT: 7,
+	READY: 8,
+	LUMBER: 9,
+	BIRTH: 10,
+	MINE: 11,
+	RUN: 12,
+	EAT: 13,
+	HARVEST: 14,
+	DIE: 15,
+	PANIC: 16,
+	GET_INTO_BUILDING: 17,
+	SHOOT: 18,
+	DEMOLISH: 19,
+	BUILD: 20,
+};
+
+export default tasks;

@@ -1,0 +1,233 @@
+@import url("./fonts.scss");
+
+* {
+	box-sizing: border-box;
+	image-rendering: pixelated;
+	-webkit-user-drag: none;
+}
+
+body {
+	overflow: hidden;
+	margin: 0;
+	height: 100vh;
+	background: #565452;
+	color: #fff;
+	font-size: 16px;
+	font-family: generic;
+	cursor:
+		url("/cursor/cursor_3x.png") 0 0,
+		auto;
+	user-select: none;
+}
+
+.lobby-container {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+
+	.lobby-container__menu-bg {
+		position: relative;
+		width: 640px;
+		display: block;
+		margin: auto;
+	}
+}
+
+.lobby-container__play-button {
+	position: absolute;
+	left: 156px;
+	top: 192px;
+}
+
+.main-menu {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	min-width: 360px;
+	min-height: 60vh;
+	flex-direction: column;
+	display: flex;
+	gap: 8px;
+
+	.main-menu__heading {
+		border-radius: 2px;
+		background: url("/borders/window-handle-center.png") repeat;
+		height: 24px;
+		display: flex;
+		justify-content: space-between;
+		align-content: center;
+		color: #fff;
+		text-shadow: 0 1px 0 #663931;
+		padding: 0 4px 0 16px;
+		margin-bottom: 16px;
+		border-bottom: 2px solid rgba(0, 0, 0, 0.5);
+
+		&:before {
+			content: "";
+			display: inline-block;
+			background: url("/borders/window-handle-left.png") repeat;
+			width: 12px;
+			height: 24px;
+			position: absolute;
+			left: 0px;
+		}
+	}
+}
+
+.border-window {
+	border-style: solid;
+	border-width: 16px 14px 20px 16px;
+	border-image: url("/borders/default.png") 16 14 20 16 stretch;
+	border-radius: 4px;
+	min-width: 32px;
+	min-height: 32px;
+	background: #403434;
+}
+
+.main-menu__ui-tabs {
+	display: flex;
+	align-items: flex-end;
+	border-bottom: 2px solid #6b3b35;
+	padding-top: 10px;
+
+	& > a.selected {
+		color: #ffe770;
+		border-image: url("/buttons/tab-selected.png") 8 fill repeat;
+		padding-bottom: 4px;
+	}
+
+	& > a {
+		display: flex;
+		flex-direction: column;
+		color: #ffb100;
+		padding: 2px 4px;
+		border-style: solid;
+		border-width: 8px;
+		border-image: url("/buttons/tab.png") 8 fill repeat;
+		position: relative;
+		gap: 12px;
+		align-items: center;
+		max-height: 120px;
+
+		img {
+			margin-top: 4px;
+			height: 40px;
+			width: fit-content;
+		}
+
+		span {
+			line-height: 1.5em;
+			text-align: center;
+		}
+	}
+
+	& > .new::after {
+		content: "new";
+		position: absolute;
+		padding: 3px;
+		padding-bottom: 0;
+		font-size: 10px;
+		font-weight: bold;
+		right: 6px;
+		top: -4px;
+		border-bottom: 4px solid #b97800;
+		transform: translate(0, -100%);
+		color: #ffa500;
+	}
+}
+
+.main-menu__ui-tabs-panel {
+	background: #663931;
+	padding: 4px 8px;
+	border-radius: 0 0 6px 6px;
+	border-bottom: 2px solid #222034;
+	border-right: 2px solid #222034;
+	margin-bottom: 16px;
+
+	p {
+		font-size: 14px;
+		margin: 0;
+		margin-top: 4px;
+		text-align: left;
+		line-height: 1.5em;
+		color: #e5c1bb;
+	}
+}
+
+.main-menu__button-group {
+	display: flex;
+	gap: 3px;
+
+	& > div {
+		flex-grow: 1;
+		flex-basis: 0;
+	}
+}
+
+.mode-picker > div.ui-tabs-panel {
+	background: #663931;
+	padding: 4px 8px;
+	border-radius: 0 0 6px 6px;
+	font-size: 14px;
+	text-align: left;
+	border-bottom: 2px solid #222034;
+	border-right: 2px solid #222034;
+	margin-bottom: 16px;
+}
+
+.button,
+.button--green,
+.button--blue {
+	display: inline-block;
+	padding: 4px;
+	border-style: solid;
+	border-width: 10px 9px;
+	border-image: url("/buttons/default.png") 10 9 fill stretch;
+	transition: filter 0.1s;
+	background-color: #847d85;
+	border-radius: 15px;
+	text-align: center;
+
+	&:hover {
+		filter: brightness(1.3);
+	}
+
+	span {
+		text-box-edge: text alphabetic;
+		text-box-trim: trim-end;
+		display: block;
+	}
+}
+
+.button--green {
+	border-image: url("/buttons/green.png") 10 9 fill stretch;
+	background-color: #47c08f;
+	color: #99e550;
+}
+
+.button--blue {
+	border-image: url("/buttons/blue.png") 10 9 fill stretch;
+	background-color: #35d3ff;
+	color: #99eaf5;
+}
+
+input[type="text"] {
+	font-family: "generic";
+	padding: 4px;
+	padding-bottom: 0;
+	width: 100%;
+	border-style: solid;
+	border-width: 10px 9px;
+	border-image: url("/buttons/input.png") 10 9 fill stretch;
+	color: #fff;
+	background: none;
+	cursor:
+		url("/cursor/text_cursor.png") 0 0,
+		auto;
+
+	&:focus {
+		outline: none;
+	}
+}

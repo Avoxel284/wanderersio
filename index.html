@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta
+			name="viewport"
+			content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta property="og:title" content="Wanderers.io" />
+		<meta property="og:url" content="https://wanderers.io" />
+		<meta
+			name="description"
+			content="Lead a tribe of tiny people through a dangerous sandbox. Gather food, cut trees and mine rocks to find resources needed to upgrade your minions. Team up with other tribes to increase your chances in battle." />
+		<meta
+			name="keywords"
+			content="wildsio, wild, io, barbarian, tribe, multiplayer, videogame, technology, rpg, game, games, web game, html5, flash" />
+		<meta name="robots" content="index, follow" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta
+			property="og:description"
+			content="Lead a tribe of tiny people through a dangerous sandbox. Gather food, cut trees and mine rocks to find resources needed to upgrade your minions. Team up with other tribes to increase your chances in battle." />
+		<meta property="og:image" content="/static/img/thumb.gif" />
+		<meta property="og:image:width" content="640" />
+		<meta property="og:image:height" content="480" />
+
+		<title>Wanderers.io</title>
+	</head>
+	<body>
+		<!-- <script src="/src/script.js"></script> -->
+
+		<div class="lobby-container">
+			<img src="/logo.png" />
+			<div class="lobby-container__menu-bg">
+				<img src="/menu.gif" />
+				<a id="playButton" class="lobby-container__play-button">
+					<img src="/buttons/start.png" />
+				</a>
+			</div>
+
+			<div id="menuWindow" class="main-menu border-window" style="display: none">
+				<div id="menuWindowTabs" class="main-menu__ui-tabs">
+					<a class="selected">Play</a>
+					<a class="new">News</a>
+					<a class="">Changes</a>
+					<a class="">Info</a>
+				</div>
+
+				<div class="main-menu__field">
+					<input maxlength="12" class="tribeName" type="text" placeholder="Tribe name" />
+				</div>
+
+				<div class="main-menu__button-group">
+					<div class="button"><span>Tutorial</span></div>
+					<div class="button--green" style="flex-grow: 2"><span>Play</span></div>
+					<div class="button--blue"><span>More</span></div>
+				</div>
+
+				<div class="main-menu__gamemode">
+					<div id="gameModeTabs" class="main-menu__ui-tabs"> </div>
+					<div class="main-menu__ui-tabs-panel">
+						<p id="gameModeDescription"> </p>
+					</div>
+				</div>
+
+				<div>
+					<div class="main-menu__heading">Play with friends</div>
+					<input maxlength="32" class="groupName" type="text" placeholder="Group name" />
+
+					<p class="subtext"
+						>Put the same text as your friend to play together.<br />Note that it will assign you
+						a unique team that nobody else can join.</p
+					>
+				</div>
+			</div>
+		</div>
+
+		<div id="root"></div>
+		<script type="module" src="/src/main.ts"></script>
+	</body>
+</html>

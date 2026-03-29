@@ -1,0 +1,24 @@
+@font-face {
+	font-family: "generic";
+	src: url("/fonts/retro.ttf") format("truetype");
+	font-weight: normal;
+	font-style: normal;
+}
+
+a {
+	color: #cf0;
+	cursor:
+		url("/cursor/cursor_3x.png") 0 0,
+		auto;
+	text-decoration: none;
+}
+
+.subtext {
+	font-size: 9pt;
+	opacity: 0.6;
+	line-height: 1.6em !important;
+}
+
+* {
+	font-size: 11pt;
+}
