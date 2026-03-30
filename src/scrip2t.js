@@ -1,8 +1,4 @@
-// this script was archived by u/Kurwabled666LOL and retrieved from https://drive.google.com/drive/folders/1nApaEhQx0fwsnrbCQkpCNVnbDLK1UfY0
-// https://www.reddit.com/r/wanderersio/comments/1odngb4/source_code_for_the_gamebuttons_in_start/
-
-// this script is also version 4505, so i suspect it is the same as web-archive-script.js, just without the wombatjs stuff
-
+let a = 1;
 NAMESPACE = CLIENT = Object.create(null);
 NAMESPACE.Manipulators = Object.create(null);
 if (typeof window !== "undefined") {
@@ -35437,15 +35433,15 @@ CLIENT.DOMTabs.prototype = {
 		this.select($tab.data("$panel"));
 	},
 	select(what) {
-		if (typeof what === "number") what = this.$panels[0];
-		let $panel = $(what);
-		this.$panels.hide();
-		this.$tabs.toggleClass("selected", false);
-		let $tab = $panel.data("$tab");
-		$panel.show();
-		$tab.toggleClass("selected", true);
-		this.value = $panel[0].dataset.value;
-		this.trigger("select", $panel[0].dataset.name, this.value);
+		// if (typeof what === "number") what = this.$panels[0];
+		// let $panel = $(what);
+		// this.$panels.hide();
+		// // this.$tabs.toggleClass("selected", false);
+		// let $tab = $panel.data("$tab");
+			// $panel.show();
+		// // $tab.toggleClass("selected", true);
+		// this.value = $panel[0].dataset.value;
+		// this.trigger("select", $panel[0].dataset.name, this.value);
 	},
 };
 Object.assign(CLIENT.DOMTabs.prototype, CLIENT.Events.prototype);
@@ -36647,26 +36643,27 @@ NAMESPACE.ObstacleSystem.prototype = {
 CLIENT.Lobby = {
 	template: ``,
 	enter() {
-		this.music = app.music.play("music/menu").loop().fadeIn(2.0);
-		gtag("event", "lobbyenter");
-		this.$element = $("#lobby");
-		this.$element.show();
-		this.$element.find(".start").on("click touchstart", this.start.bind(this));
-		this.$element.find(".tutorial").on("click touchstart", this.tutorial.bind(this));
-		this.$element.find(".showMainMenu").on("click touchstart", this.menuClick.bind(this));
-		this.$element.find(".moreGames").on("click touchstart", this.moreGamesClick.bind(this));
-		this.$element.find(".mainMenu").hide();
-		this.$element.find(".tribeName").on("change keyup", this.validateTribeName.bind(this));
-		this.$element.find(".tribeName").val(localStorage.getItem("tribeName"));
-		this.$element
-			.find(".groupName")
-			.on("change keyup", Utils.debounce(this.onGroupChange, 300).bind(this));
-		this.$element.find(".groupName").val(localStorage.getItem("group"));
-		this.selectMode("Sandbox");
-		this.tabs = DOM.tabs(this.$element.find(".mainMenu")).on("select", this.onTabChange.bind(this));
-		this.modePicker = DOM.tabs(this.$element.find(".modePicker"));
-		this.modePicker.on("select", this.onModePicker.bind(this));
-		this.modePicker.select(0);
+		// this.music = app.music.play("music/menu").loop().fadeIn(2.0);
+		// gtag("event", "lobbyenter");
+		// this.$element = $("#lobby");
+		// this.$element.show();
+		// this.$element.find(".start").on("click touchstart", this.start.bind(this));
+		// console.log(this.$element.find(".start"))
+		// this.$element.find(".tutorial").on("click touchstart", this.tutorial.bind(this));
+		// this.$element.find(".showMainMenu").on("click touchstart", this.menuClick.bind(this));
+		// this.$element.find(".moreGames").on("click touchstart", this.moreGamesClick.bind(this));
+		// this.$element.find(".mainMenu").hide();
+		// this.$element.find(".tribeName").on("change keyup", this.validateTribeName.bind(this));
+		// this.$element.find(".tribeName").val(localStorage.getItem("tribeName"));
+		// this.$element
+		// 	.find(".groupName")
+		// 	.on("change keyup", Utils.debounce(this.onGroupChange, 300).bind(this));
+		// this.$element.find(".groupName").val(localStorage.getItem("group"));
+		// this.selectMode("Sandbox");
+		// this.tabs = DOM.tabs(this.$element.find(".mainMenu")).on("select", this.onTabChange.bind(this));
+		// this.modePicker = DOM.tabs(this.$element.find(".modePicker"));
+		// this.modePicker.on("select", this.onModePicker.bind(this));
+		// this.modePicker.select(0);
 	},
 	onTabChange() {
 		if (app.isOwn) this.showAd();
@@ -36696,43 +36693,10 @@ CLIENT.Lobby = {
 		this.hideAd();
 	},
 	async showAd() {
-		if (window.innerWidth < 800) return;
-		let menu = this.$element.find(".mainMenu");
-		if (window.CHECKQUEREDINK) {
-			let info = await fetch("/checkqueredink/info.json?" + Date.now()).then((r) => r.json());
-			let item = Utils.random(info.items);
-			let $ad = $(".ci-ad");
-			let img = new Image();
-			$ad.show();
-			img.src = `/checkqueredink/${item.name}?=${info.timestamp}`;
-			$ad.html(`<a href='${item.url}' target="_blank"></a>`);
-			$ad.children("a").append(img);
-			img.addEventListener("load", () => {
-				$ad.css({
-					left: menu.offset().left + menu.outerWidth() + 64 + "px",
-					top: menu.offset().top + menu.outerHeight() / 2 - $ad.outerHeight() / 2 + "px",
-				});
-			});
-		} else {
-			let $ad = $(".banner-ad");
-			let marginLeft = Math.max(
-				0,
-				-(window.innerWidth / 2 - menu.outerWidth() / 2 - 64 - $ad.outerWidth()),
-			);
-			if (marginLeft > 0) {
-				menu.css({ marginLeft: marginLeft + "px" });
-			}
-			$ad.css({
-				left: menu.offset().left - $ad.outerWidth() - 48 + "px",
-				top: menu.offset().top + menu.outerHeight() / 2 - $ad.outerHeight() / 2 + "px",
-			});
-			if (menu.offset().top < 0) {
-				this.hideAd();
-				menu.css({ marginTop: "0px" });
-			}
-		}
+		
 	},
 	hideAd() {
+		console.log("hiding ad")
 		let $ad = $(".banner-ad");
 		$ad.css({ top: "-1000px" });
 		$(".ci-ad").hide();
@@ -36761,19 +36725,16 @@ CLIENT.Lobby = {
 		app.iog.promo();
 	},
 	start() {
+		console.log("hi")
 		if (this.startClicked) return;
 		this.startClicked = true;
 		app.sound.play("empty");
-		if (app.isOwn) this.hideAd();
-		if (window.NOADBLOCK) gtag("event", "interstitial_start");
-		if (!window.NOADBLOCK) gtag("event", "adblock");
-		app.ad.interstitial(() => {
-			if (window.NOADBLOCK) gtag("event", "interstitial_end");
-			CLIENT.Game.tribeName = this.$element.find(".tribeName").val();
-			CLIENT.Game.groupName = this.$element.find(".groupName").val();
+		// app.ad.interstitial(() => {
+			CLIENT.Game.tribeName = 'mytribe'||this.$element.find(".tribeName").val();
+			CLIENT.Game.groupName = 'group'||this.$element.find(".groupName").val();
 			CLIENT.Game.mode = this.mode;
 			app.setState(CLIENT.Game);
-		});
+		// });
 	},
 	tutorial() {
 		new CLIENT.HelpWindow();
@@ -39526,6 +39487,7 @@ var app = new PLAYGROUND.Application({
 		this.loadSprite("building/food_storage");
 		this.loadSprite("building/windmill");
 		this.loadSprite("building/lumberjack");
+		console.log("loaded everything");
 		this.sound = this.audio.channel("sound");
 		if (this.sound.compressor) {
 			app.sound.compressor.threshold.value = -10;
@@ -39546,6 +39508,7 @@ var app = new PLAYGROUND.Application({
 			gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 			this.quad = meshBuffer;
 		}
+		console.log("1");
 	},
 	adStart() {
 		if (app.sound.reconnect) {

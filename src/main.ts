@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const gameModeDescription: HTMLElement | null = document.getElementById("gameModeDescription");
 	const gameModeTabs: HTMLElement | null = document.getElementById("gameModeTabs");
 
+	document.getElementById("startButton")?.addEventListener("click",function(ev){
+		CLIENT.Lobby.start()
+	})
+
 	const backgroundMusic = document.createElement("audio");
 	backgroundMusic.src = "/sounds/menu.ogg";
 	// backgroundMusic.play();

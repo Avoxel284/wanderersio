@@ -25,6 +25,7 @@ body {
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+	z-index: 3;
 
 	.lobby-container__menu-bg {
 		position: relative;
@@ -54,7 +55,7 @@ body {
 	.main-menu__heading {
 		border-radius: 2px;
 		background: url("/borders/window-handle-center.png") repeat;
-		height: 24px;
+		height: 26px;
 		display: flex;
 		justify-content: space-between;
 		align-content: center;

@@ -8,17 +8,18 @@ const app = express();
 const __dirname = import.meta.dirname;
 
 app.use(cors({ origin: "*" }));
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: { directives: { "script-src": ["'unsafe-eval'", "'self'"] } } }));
 
 app.use("/api/v1/", api);
 
-app.get("/", async (req, res) => {
-	res.sendFile(path.resolve(__dirname, "../public/index.html"));
+app.get("/client/server/:region/:mode/:id", (req, res) => {
+	res.send("s1");
 });
 
-app.use("/static", async (req, res, next) => {
-	express.static(path.resolve(`${__dirname}/../public`), {
+app.use("/", async (req, res, next) => {
+	express.static(path.resolve(`${__dirname}/../dist`), {
 		maxAge: "2d",
+		index: "index.html",
 	})(req, res, next);
 });
 
