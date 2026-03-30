@@ -7814,6 +7814,11 @@ PLAYGROUND.Utils = {
 	},
 };
 PLAYGROUND.Utils.ease = ease;
+
+/**
+ * ** BEGIN **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Events.js
+ */
 PLAYGROUND.Events = function () {
 	this.listeners = {};
 };
@@ -7871,6 +7876,11 @@ PLAYGROUND.Events.prototype = {
 		}
 	},
 };
+/**
+ * ** END **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Events.js
+ */
+
 PLAYGROUND.States = function (app) {
 	this.app = app;
 	PLAYGROUND.Events.call(this);
@@ -7906,6 +7916,10 @@ PLAYGROUND.States.prototype = {
 	},
 };
 PLAYGROUND.Utils.extend(PLAYGROUND.States.prototype, PLAYGROUND.Events.prototype);
+/**
+ * PLAYGROUNDJS
+ * src/Application.js
+ */
 PLAYGROUND.Application = function (args) {
 	var app = this;
 	this.preventDefaults = true;
@@ -8271,6 +8285,16 @@ PLAYGROUND.Application.prototype = {
 	},
 };
 PLAYGROUND.Utils.extend(PLAYGROUND.Application.prototype, PLAYGROUND.Events.prototype);
+/**
+ * ** END **
+ * src/Application.js
+ */
+
+/**
+ * ** BEGIN **
+ * PACKAGED FROM PLAYGROUNDJS -> src/GameLoop.js
+ * Note: has been modified from latest version of pjs
+ */
 PLAYGROUND.GameLoop = function (app) {
 	let fpses = [];
 	let lastFPSIndex = 0;
@@ -8317,6 +8341,11 @@ PLAYGROUND.GameLoop = function (app) {
 	app.loop.step = step;
 	app.loop.render = render;
 };
+/**
+ * ** END **
+ * PACKAGED FROM PLAYGROUNDJS -> src/GameLoop.js
+ */
+
 PLAYGROUND.Gamepads = function (app) {
 	this.app = app;
 	PLAYGROUND.Events.call(this);
@@ -9692,6 +9721,10 @@ PLAYGROUND.TweenManager.prototype = {
 		tween.onremove();
 	},
 };
+/**
+ * ** BEGIN **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Atlases.js
+ */
 PLAYGROUND.Application.prototype.loadAtlases = function () {
 	for (var i = 0; i < arguments.length; i++) {
 		var arg = arguments[i];
@@ -9737,6 +9770,15 @@ PLAYGROUND.Application.prototype._loadAtlas = function (filename) {
 	};
 	request.send();
 };
+/**
+ * ** END **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Atlases.js
+ */
+
+/**
+ * ** BEGIN **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Fonts.js
+ */
 PLAYGROUND.Application.prototype.loadFontOld = function (name) {
 	var styleNode = document.createElement("style");
 	styleNode.type = "text/css";
@@ -9767,7 +9809,25 @@ PLAYGROUND.Application.prototype.loadFontOld = function (name) {
 	}
 	check();
 };
+/**
+ * ** END **
+ * PACKAGED FROM PLAYGROUNDJS -> src/Fonts.js
+ */
+
+/**
+ * ** BEGIN **
+ * PACKAGED FROM PLAYGROUNDJS -> src/DefaultState.js
+ */
 PLAYGROUND.DefaultState = {};
+/**
+ * ** END **
+ * PACKAGED FROM PLAYGROUNDJS -> src/DefaultState.js
+ */
+
+/**
+ * PACKAGED FROM: PLAYGROUNDJS
+ * src/layer/LoadingScreen.js
+ */
 PLAYGROUND.LoadingScreen = {
 	logoRaw:
 		"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANoAAAASBAMAAADPiN0xAAAAGFBMVEUAAQAtLixHSUdnaGaJioimqKXMzsv7/fr5shgVAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB98EAwkeA4oQWJ4AAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAB9klEQVQ4y72UvW+rMBDAz+FrpVKrrFmesmapWNOlrKjSe1kZ+uoVAvj+/frujG1SaJcqJwU7voOf7xMQzQmsIDi5NPTMsLRntH3U+F6SAZo3NlCvcgBFJz8o+vkDiE63lI95Y/UmpinsZWkgJWJiDbAVQ16htptxSTNloIlugwaw001Ey3ASF3so6L1qLNXzQS5S0UGKL/CI5wWNriE0UH9Yty37LqIVg+wsqu7Ix0MwVBSF/dU+jv2SNnma021LEdPqVnMeU3xAu0kXcSGjmq7Ox4E2Wn88LZ2+EFj3avjixzai6VPVyuYveZLHF2XfdDnvAq27DIHGuq+0DJFsE30OtB1KqOwd8Dr7PcM4b+jfj2g5lp4WyntBK66qua3JzEA+uXJpwH/NlVuzRVPY/kTLB2mjuN+KwdZ8FOy8j2gDbEUSqumnSCY4lf4ibq3IhVM4ycZQRnv+zFqVdJQVn6BxvUqebGpuaNo3sZxwBzjajiMZOoBiwyVF+kCr+nUaJOaGpnAeRPPJZTr4FqmHRXcneEo4DqQ/ftfdnLeDrUAME8xWKPeKCwW6YkEpXfs3p1EWJhdcUAYP0TI/uYaV8cgjwBovaeyWwji2T9rTFIdS/cP/MnkTLRUWxgNNZVin7bT5fqT9miDcUVJzR1gRpfIONMmulU+5Qqr6zXAUqAAAAABJRU5ErkJggg==",
@@ -9824,6 +9884,11 @@ PLAYGROUND.LoadingScreen = {
 		this.progressBar.style.width = ((this.current * 100) | 0) + "%";
 	},
 };
+/**
+ * END
+ * src/layer/LoadingScreen.js
+ */
+
 (function () {
 	var lib = {
 		pools: new Map(),
@@ -35437,7 +35502,7 @@ CLIENT.DOMTabs.prototype = {
 		// this.$panels.hide();
 		// // this.$tabs.toggleClass("selected", false);
 		// let $tab = $panel.data("$tab");
-			// $panel.show();
+		// $panel.show();
 		// // $tab.toggleClass("selected", true);
 		// this.value = $panel[0].dataset.value;
 		// this.trigger("select", $panel[0].dataset.name, this.value);
@@ -36691,11 +36756,9 @@ CLIENT.Lobby = {
 		this.$element.remove();
 		this.hideAd();
 	},
-	async showAd() {
-		
-	},
+	async showAd() {},
 	hideAd() {
-		console.log("hiding ad")
+		console.log("hiding ad");
 		let $ad = $(".banner-ad");
 		$ad.css({ top: "-1000px" });
 		$(".ci-ad").hide();
@@ -36724,15 +36787,15 @@ CLIENT.Lobby = {
 		app.iog.promo();
 	},
 	start() {
-		console.log("hi")
+		console.log("hi");
 		if (this.startClicked) return;
 		this.startClicked = true;
 		app.sound.play("empty");
 		// app.ad.interstitial(() => {
-			CLIENT.Game.tribeName = 'mytribe'||this.$element.find(".tribeName").val();
-			CLIENT.Game.groupName = 'group'||this.$element.find(".groupName").val();
-			CLIENT.Game.mode = this.mode;
-			app.setState(CLIENT.Game);
+		CLIENT.Game.tribeName = "mytribe" || this.$element.find(".tribeName").val();
+		CLIENT.Game.groupName = "group" || this.$element.find(".groupName").val();
+		CLIENT.Game.mode = this.mode;
+		app.setState(CLIENT.Game);
 		// });
 	},
 	tutorial() {

@@ -1,7 +1,7 @@
 import "../static/style/base.scss";
 
 
-import client from "./client";
+import client from "./lib/client";
 import items from "./lib/items";
 import COMMON from "./lib/common";
 import { Gamemodes, GamemodeKeys } from "./lib/gamemodes";
