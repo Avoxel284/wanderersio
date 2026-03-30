@@ -93,13 +93,13 @@ body {
 	border-bottom: 2px solid #6b3b35;
 	padding-top: 10px;
 
-	& > a.selected {
+	& > div.selected {
 		color: #ffe770;
 		border-image: url("/buttons/tab-selected.png") 8 fill repeat;
 		padding-bottom: 4px;
 	}
 
-	& > a {
+	& > div {
 		display: flex;
 		flex-direction: column;
 		color: #ffb100;

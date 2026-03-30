@@ -18,7 +18,7 @@ app.get("/client/server/:region/:mode/:id", (req, res) => {
 
 app.use("/", async (req, res, next) => {
 	express.static(path.resolve(`${__dirname}/../dist`), {
-		maxAge: "2d",
+		// maxAge: "2d",
 		index: "index.html",
 	})(req, res, next);
 });

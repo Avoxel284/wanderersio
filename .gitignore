@@ -10,6 +10,8 @@ node_modules
 dist
 dist-ssr
 *.local
+.output
+.svelte-kit
 
 .vscode/*
 !.vscode/extensions.json

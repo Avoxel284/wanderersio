@@ -1,4 +1,3 @@
-let a = 1;
 NAMESPACE = CLIENT = Object.create(null);
 NAMESPACE.Manipulators = Object.create(null);
 if (typeof window !== "undefined") {

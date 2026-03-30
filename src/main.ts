@@ -1,9 +1,12 @@
 import "../static/style/base.scss";
 
+
 import client from "./client";
 import items from "./lib/items";
 import COMMON from "./lib/common";
 import { Gamemodes, GamemodeKeys } from "./lib/gamemodes";
+
+console.log('hiiiii')
 
 const menuTabs = ["PLAY", "NEWS", "CHANGES", "INFO"];
 
@@ -17,9 +20,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 	const gameModeDescription: HTMLElement | null = document.getElementById("gameModeDescription");
 	const gameModeTabs: HTMLElement | null = document.getElementById("gameModeTabs");
 
-	document.getElementById("startButton")?.addEventListener("click",function(ev){
-		CLIENT.Lobby.start()
-	})
+	document.getElementById("startButton")?.addEventListener("click", function (ev) {
+		CLIENT.Lobby.start();
+	});
 
 	const backgroundMusic = document.createElement("audio");
 	backgroundMusic.src = "/sounds/menu.ogg";
