@@ -1,65 +1,57 @@
-PLAYGROUND.GameLoop = function(app) {
+PLAYGROUND.GameLoop = function (app) {
+	app.lifetime = 0;
+	app.ops = 0;
+	app.opcost = 0;
 
-  app.lifetime = 0;
-  app.ops = 0;
-  app.opcost = 0;
+	var lastTick = Date.now();
+	var frame = 0;
 
-  var lastTick = Date.now();
-  var frame = 0;
+	function render(delta) {
+		app.emitGlobalEvent("prerender", delta);
+		app.emitGlobalEvent("render", delta);
+		app.emitGlobalEvent("postrender", delta);
+	}
 
-  function render(dt) {
+	function step(delta) {
+		app.emitGlobalEvent("step", delta);
+	}
 
-    app.emitGlobalEvent("prerender", dt)
-    app.emitGlobalEvent("render", dt)
-    app.emitGlobalEvent("postrender", dt)
+	function gameLoop() {
+		if (app.killed) return;
 
-  };
+		requestAnimationFrame(gameLoop);
 
-  function step(dt) {
+		if (app.frameskip) {
+			frame++;
+			if (frame === app.frameskip) {
+				frame = 0;
+			} else return;
+		}
 
-    app.emitGlobalEvent("step", dt)
+		var delta = Date.now() - lastTick;
 
-  };
+		lastTick = Date.now();
 
-  function gameLoop() {
+		if (delta > 1000) return;
 
-    if (app.killed) return;
+		var dt = delta / 1000;
 
-    requestAnimationFrame(gameLoop);
+		app.lifetime += dt;
+		app.elapsed = dt;
 
-    if (app.frameskip) {
-      frame++;
-      if (frame === app.frameskip) {
-        frame = 0;
-      } else return;
-    }
+		// app.emitLocalEvent("framestart", dt);
 
-    var delta = Date.now() - lastTick;
+		step(dt);
 
-    lastTick = Date.now();
+		// app.emitLocalEvent("framemid", dt);
 
-    if (delta > 1000) return;
+		render(dt);
 
-    var dt = delta / 1000;
+		// app.emitLocalEvent("frameend", dt);
 
-    app.lifetime += dt;
-    app.elapsed = dt;
+		app.opcost = delta / 1000;
+		app.ops = 1000 / app.opcost;
+	}
 
-    // app.emitLocalEvent("framestart", dt);
-
-    step(dt);
-
-    // app.emitLocalEvent("framemid", dt);
-
-    render(dt);
-
-    // app.emitLocalEvent("frameend", dt);
-
-    app.opcost = delta / 1000;
-    app.ops = 1000 / app.opcost;
-
-  };
-
-  requestAnimationFrame(gameLoop);
-
+	requestAnimationFrame(gameLoop);
 };

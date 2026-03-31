@@ -166,7 +166,7 @@ Move the player.
 }
 ```
 
-### `"STAY"`
+### `"MOVE_TOTEM"`
 
 Payload:
 

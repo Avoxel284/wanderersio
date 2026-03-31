@@ -1,14 +1,18 @@
 <script lang="ts">
 	import "../style/base.scss";
 	let { children } = $props();
-	let cv: HTMLCanvasElement;
+	let canvas: HTMLCanvasElement;
 	let disconnected = $state(false);
 	let gameOver = $state(false);
+
+	var app =new  PLAYGROUND.Application({
+		
+	})
 </script>
 
 {@render children()}
 
-<canvas bind:this={cv}></canvas>
+<canvas bind:this={canvas}></canvas>
 
 {#if disconnected}
 	<div class="modal border-window">

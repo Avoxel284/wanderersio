@@ -14,153 +14,131 @@
  * `context` and `data`.
  */
 
-PLAYGROUND.Events = function() {
-
-  this.listeners = {};
-
+PLAYGROUND.Events = function () {
+	this.listeners = {};
 };
 
 PLAYGROUND.Events.prototype = {
+	/** Add a listner for an event.
+	 *
+	 * @param event name of the event or an associative array
+	 *              where keys are event names and values are
+	 *              callbacks to use
+	 * @param callback the function to call for this listner; if
+	 *                 *event* is an object this parameter is ignored
+	 * @param context *this* when calling the callback(s)
+	 *
+	 * @returns the listner object
+	 */
 
-  /** Add a listner for an event.
-   *
-   * @param event name of the event or an associative array
-   *              where keys are event names and values are
-   *              callbacks to use
-   * @param callback the function to call for this listner; if
-   *                 *event* is an object this parameter is ignored
-   * @param context *this* when calling the callback(s)
-   *
-   * @returns the listner object
-   */
+	on: function (event, callback, context) {
+		if (typeof event === "object") {
+			var result = {};
+			for (var key in event) {
+				result[key] = this.on(key, event[key], context);
+			}
+			return result;
+		}
 
-  on: function(event, callback, context) {
+		if (!this.listeners[event]) this.listeners[event] = [];
 
-    if (typeof event === "object") {
-      var result = {};
-      for (var key in event) {
-        result[key] = this.on(key, event[key], context)
-      }
-      return result;
-    }
+		var listener = {
+			once: false,
+			callback: callback,
+			context: context,
+		};
 
-    if (!this.listeners[event]) this.listeners[event] = [];
+		this.listeners[event].push(listener);
 
-    var listener = {
-      once: false,
-      callback: callback,
-      context: context
-    };
+		return listener;
+	},
 
-    this.listeners[event].push(listener);
+	/** Add a listner for an event.
+	 *
+	 * @param event name of the event or an associative array
+	 *              where keys are event names and values are
+	 *              callbacks to use
+	 * @param callback the function to call for this listner; if
+	 *                 *event* is an object this parameter is ignored
+	 * @param context *this* when calling the callback(s)
+	 *
+	 * @returns the listner object
+	 */
 
-    return listener;
-  },
+	once: function (event, callback, context) {
+		if (typeof event === "object") {
+			var result = {};
+			for (var key in event) {
+				result[key] = this.once(key, event[key], context);
+			}
+			return result;
+		}
 
-  /** Add a listner for an event.
-   *
-   * @param event name of the event or an associative array
-   *              where keys are event names and values are
-   *              callbacks to use
-   * @param callback the function to call for this listner; if
-   *                 *event* is an object this parameter is ignored
-   * @param context *this* when calling the callback(s)
-   *
-   * @returns the listner object
-   */
+		if (!this.listeners[event]) this.listeners[event] = [];
 
-  once: function(event, callback, context) {
+		var listener = {
+			once: true,
+			callback: callback,
+			context: context,
+		};
 
-    if (typeof event === "object") {
-      var result = {};
-      for (var key in event) {
-        result[key] = this.once(key, event[key], context)
-      }
-      return result;
-    }
+		this.listeners[event].push(listener);
 
-    if (!this.listeners[event]) this.listeners[event] = [];
+		return listener;
+	},
 
-    var listener = {
-      once: true,
-      callback: callback,
-      context: context
-    };
+	/** Remove an event listner from an event.
+	 *
+	 * The function will remove all occurences that use that particular
+	 * callback (will be a single instance in well behaved applications).
+	 *
+	 * @param event the name of the event
+	 * @param callback identifying the listner
+	 */
 
-    this.listeners[event].push(listener);
+	off: function (event, callback) {
+		for (var i = 0, len = this.listeners[event].length; i < len; i++) {
+			if (this.listeners[event][i] === callback) {
+				this.listeners[event].splice(i--, 1);
+				len--;
+			}
+		}
+	},
 
-    return listener;
-  },
+	/** Raise an event.
+	 *
+	 *  If the listner is only to be raised once this function
+	 * removes it from the list of listners.
+	 *
+	 * @param event the name of the event being raised
+	 * @param data array of arguments for the callbacks
+	 *
+	 */
 
-  /** Remove an event listner from an event.
-   *
-   * The function will remove all occurences that use that particular
-   * callback (will be a single instance in well behaved applications).
-   *
-   * @param event the name of the event
-   * @param callback identifying the listner
-   */
+	trigger: function (event, data) {
+		/* if you prefer events pipe */
 
-  off: function(event, callback) {
+		if (this.listeners["event"]) {
+			for (var i = 0, len = this.listeners["event"].length; i < len; i++) {
+				var listener = this.listeners["event"][i];
 
-    for (var i = 0, len = this.listeners[event].length; i < len; i++) {
+				listener.callback.call(listener.context || this, event, data);
+			}
+		}
 
-      if (this.listeners[event][i] === callback) {
-      
-        this.listeners[event].splice(i--, 1);
-        len--;
-      
-      }
+		/* or subscribed to a single event */
 
-    }
+		if (this.listeners[event]) {
+			for (var i = 0, len = this.listeners[event].length; i < len; i++) {
+				var listener = this.listeners[event][i];
 
-  },
+				listener.callback.call(listener.context || this, data);
 
-  /** Raise an event.
-   *
-   *  If the listner is only to be raised once this function
-   * removes it from the list of listners.
-   *
-   * @param event the name of the event being raised
-   * @param data array of arguments for the callbacks
-   *
-   */
-
-  trigger: function(event, data) {
-
-    /* if you prefer events pipe */
-
-    if (this.listeners["event"]) {
-
-      for (var i = 0, len = this.listeners["event"].length; i < len; i++) {
-
-        var listener = this.listeners["event"][i];
-
-        listener.callback.call(listener.context || this, event, data);
-
-      }
-
-    }
-
-    /* or subscribed to a single event */
-
-    if (this.listeners[event]) {
-      
-      for (var i = 0, len = this.listeners[event].length; i < len; i++) {
-
-        var listener = this.listeners[event][i];
-
-        listener.callback.call(listener.context || this, data);
-
-        if (listener.once) {
-          this.listeners[event].splice(i--, 1);
-          len--;
-        } 
-
-      }
-      
-    }
-
-  }
-
+				if (listener.once) {
+					this.listeners[event].splice(i--, 1);
+					len--;
+				}
+			}
+		}
+	},
 };
