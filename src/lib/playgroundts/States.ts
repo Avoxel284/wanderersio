@@ -19,7 +19,7 @@ class States extends Events {
 
 		PLAYGROUND.Events.call(this);
 
-		app.on("step",() =>this.step());
+		app.on("step", () => this.step());
 	}
 
 	/**
@@ -73,6 +73,13 @@ class States extends Events {
 		this.app.currentState = this.current;
 
 		this.next = false;
+	}
+
+	set(state: any) {
+		if (this.current && this.current?.leave != null) this.current.leave();
+
+		this.next = state;
+		this.step(0);
 	}
 }
 

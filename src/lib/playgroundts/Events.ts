@@ -41,7 +41,7 @@ class Events {
 	 *
 	 * @returns the listner object
 	 */
-	on(event: any, callback: () => void, context: any = undefined) {
+	on(event: any, callback: (event:string, data:any) => void, context: any = undefined) {
 		if (typeof event === "object") {
 			let result: any = {};
 			for (let key in event) {
@@ -130,7 +130,7 @@ class Events {
 	 * @param data Array of arguments for the callbacks
 	 *
 	 */
-	emit(event: any, data: any) {
+	emit(event: any, data?: any) {
 		/* if you prefer events pipe */
 		if (this.listeners["event"]) {
 			for (let i = 0, len = this.listeners["event"].length; i < len; i++) {
