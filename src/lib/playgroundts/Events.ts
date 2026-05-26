@@ -41,7 +41,11 @@ class Events {
 	 *
 	 * @returns the listner object
 	 */
-	on(event: any, callback: (event:string, data:any) => void, context: any = undefined) {
+	on(
+		event: string | { [x: string]: any },
+		callback: (event: string, data: any) => void,
+		context: any = undefined,
+	) {
 		if (typeof event === "object") {
 			let result: any = {};
 			for (let key in event) {
@@ -75,7 +79,7 @@ class Events {
 	 *
 	 * @returns the listner object
 	 */
-	once(event: any, callback: () => void, context: any) {
+	once(event: any, callback: () => void, context?: any) {
 		if (typeof event === "object") {
 			let result: any = {};
 			for (let key in event) {

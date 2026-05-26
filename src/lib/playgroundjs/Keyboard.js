@@ -23,236 +23,208 @@
  * Reference: http://playgroundjs.com/playground-keyboard
  */
 
-PLAYGROUND.Keyboard = function(app) {
+PLAYGROUND.Keyboard = function (app) {
+	PLAYGROUND.Events.call(this);
 
-  PLAYGROUND.Events.call(this);
+	this.app = app;
+	this.keys = {};
+	this.timestamps = {};
+	this.any = false;
+	this.lastKey = -1;
 
-  this.app = app;
-  this.keys = {};
-  this.timestamps = {};
-  this.any = false;
-  this.lastKey = -1;
+	this.keydownlistener = this.keydown.bind(this);
+	this.keyuplistener = this.keyup.bind(this);
+	this.keypresslistener = this.keypress.bind(this);
 
-  this.keydownlistener = this.keydown.bind(this);
-  this.keyuplistener = this.keyup.bind(this);
-  this.keypresslistener = this.keypress.bind(this);
+	document.addEventListener("keydown", this.keydownlistener);
+	document.addEventListener("keyup", this.keyuplistener);
+	document.addEventListener("keypress", this.keypresslistener);
 
-  document.addEventListener("keydown", this.keydownlistener);
-  document.addEventListener("keyup", this.keyuplistener);
-  document.addEventListener("keypress", this.keypresslistener);
+	this.keydownEvent = {};
+	this.keyupEvent = {};
+	this.keypressEvent = {};
 
-  this.keydownEvent = {};
-  this.keyupEvent = {};
-  this.keypressEvent = {};
+	this.preventDefault = true;
 
-  this.preventDefault = true;
+	this.enabled = true;
 
-  this.enabled = true;
+	this.app.on("kill", this.kill.bind(this));
+	this.app.on("blur", this.blur.bind(this));
 
-  this.app.on("kill", this.kill.bind(this));
-  this.app.on("blur", this.blur.bind(this));
+	this.mapping = {};
 
-  this.mapping = {};
+	this.keyToCode = {};
 
-  this.keyToCode = {};
-
-  for (var code in this.keycodes) this.keyToCode[this.keycodes[code]] = code;
-
+	for (var code in this.keycodes) this.keyToCode[this.keycodes[code]] = code;
 };
 
 PLAYGROUND.Keyboard.prototype = {
+	doubleTimeframe: 0.25,
 
-  doubleTimeframe: 0.25,
+	kill: function () {
+		document.removeEventListener("keydown", this.keydownlistener);
+		document.removeEventListener("keyup", this.keyuplistener);
+		document.removeEventListener("keypress", this.keypresslistener);
+	},
 
-  kill: function() {
+	keycodes: {
+		37: "left",
+		38: "up",
+		39: "right",
+		40: "down",
+		45: "insert",
+		46: "delete",
+		8: "backspace",
+		9: "tab",
+		13: "enter",
+		16: "shift",
+		17: "ctrl",
+		18: "alt",
+		19: "pause",
+		20: "capslock",
+		27: "escape",
+		32: "space",
+		33: "pageup",
+		34: "pagedown",
+		35: "end",
+		36: "home",
+		96: "numpad0",
+		97: "numpad1",
+		98: "numpad2",
+		99: "numpad3",
+		100: "numpad4",
+		101: "numpad5",
+		102: "numpad6",
+		103: "numpad7",
+		104: "numpad8",
+		105: "numpad9",
+		106: "numpadmul",
+		107: "numpadadd",
+		109: "numpadsub",
+		110: "numpaddec",
+		111: "numpaddiv",
+		112: "f1",
+		113: "f2",
+		114: "f3",
+		115: "f4",
+		116: "f5",
+		117: "f6",
+		118: "f7",
+		119: "f8",
+		120: "f9",
+		121: "f10",
+		122: "f11",
+		123: "f12",
+		144: "numlock",
+		145: "scrolllock",
+		186: "semicolon",
+		187: "equal",
+		188: "comma",
+		189: "dash",
+		190: "period",
+		191: "slash",
+		192: "graveaccent",
+		219: "openbracket",
+		220: "backslash",
+		221: "closebracket",
+		222: "singlequote",
+	},
 
-    document.removeEventListener("keydown", this.keydownlistener);
-    document.removeEventListener("keyup", this.keyuplistener);
-    document.removeEventListener("keypress", this.keypresslistener);
+	bypassKeys: ["f12", "f11", "f5", "ctrl", "alt", "shift"],
 
-  },
+	keydown: function (e) {
+		if (!this.enabled) return;
 
-  keycodes: {
-    37: "left",
-    38: "up",
-    39: "right",
-    40: "down",
-    45: "insert",
-    46: "delete",
-    8: "backspace",
-    9: "tab",
-    13: "enter",
-    16: "shift",
-    17: "ctrl",
-    18: "alt",
-    19: "pause",
-    20: "capslock",
-    27: "escape",
-    32: "space",
-    33: "pageup",
-    34: "pagedown",
-    35: "end",
-    36: "home",
-    96: "numpad0",
-    97: "numpad1",
-    98: "numpad2",
-    99: "numpad3",
-    100: "numpad4",
-    101: "numpad5",
-    102: "numpad6",
-    103: "numpad7",
-    104: "numpad8",
-    105: "numpad9",
-    106: "numpadmul",
-    107: "numpadadd",
-    109: "numpadsub",
-    110: "numpaddec",
-    111: "numpaddiv",
-    112: "f1",
-    113: "f2",
-    114: "f3",
-    115: "f4",
-    116: "f5",
-    117: "f6",
-    118: "f7",
-    119: "f8",
-    120: "f9",
-    121: "f10",
-    122: "f11",
-    123: "f12",
-    144: "numlock",
-    145: "scrolllock",
-    186: "semicolon",
-    187: "equal",
-    188: "comma",
-    189: "dash",
-    190: "period",
-    191: "slash",
-    192: "graveaccent",
-    219: "openbracket",
-    220: "backslash",
-    221: "closebracket",
-    222: "singlequote"
-  },
+		if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
+		else var keyName = this.keycodes[e.which];
 
-  bypassKeys: ["f12", "f11", "f5", "ctrl", "alt", "shift"],
+		if (this.mapping[keyName]) keyName = this.mapping[keyName];
 
-  keydown: function(e) {
+		if (this.keys[keyName]) return;
 
-    if (!this.enabled) return;
+		this.any++;
 
-    if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
-    else var keyName = this.keycodes[e.which];
+		this.keydownEvent.key = keyName;
+		this.keydownEvent.original = e;
 
-    if (this.mapping[keyName]) keyName = this.mapping[keyName];
+		this.keys[keyName] = true;
 
-    if (this.keys[keyName]) return;
+		if (keyName === this.lastKey && Date.now() - this.timestamps[keyName] < this.doubleTimeframe * 1000) {
+			this.timestamps[keyName] = Date.now() - this.doubleTimeframe;
+			this.keydownEvent.double = true;
+		} else {
+			this.timestamps[keyName] = Date.now();
+			this.keydownEvent.double = false;
+		}
 
-    this.any++;
+		this.trigger("keydown", this.keydownEvent);
 
-    this.keydownEvent.key = keyName;
-    this.keydownEvent.original = e;
+		if (this.preventDefault && document.activeElement === document.body) {
+			var bypass = e.metaKey;
 
-    this.keys[keyName] = true;
+			if (!bypass) {
+				for (var i = 0; i < this.bypassKeys.length; i++) {
+					if (this.keys[this.bypassKeys[i]]) {
+						bypass = true;
+						break;
+					}
+				}
+			}
 
-    if (keyName === this.lastKey && Date.now() - this.timestamps[keyName] < this.doubleTimeframe * 1000) {
+			if (!bypass) {
+				// e.returnValue = false;
+				// e.keyCode = 0;
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		}
 
-      this.timestamps[keyName] = Date.now() - this.doubleTimeframe;
-      this.keydownEvent.double = true;
+		this.lastKey = keyName;
+	},
 
-    } else {
+	keyup: function (e) {
+		if (!this.enabled) return;
 
-      this.timestamps[keyName] = Date.now();
-      this.keydownEvent.double = false;
+		if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
+		else var keyName = this.keycodes[e.which];
 
-    }
+		if (this.mapping[keyName]) keyName = this.mapping[keyName];
 
+		this.any--;
 
-    this.trigger("keydown", this.keydownEvent);
+		this.keyupEvent.key = keyName;
+		this.keyupEvent.original = e;
 
-    if (this.preventDefault && document.activeElement === document.body) {
+		this.keys[keyName] = false;
 
-      var bypass = e.metaKey;
+		this.trigger("keyup", this.keyupEvent);
+	},
 
-      if (!bypass) {
+	keypress: function (e) {
+		if (!this.enabled) return;
 
-        for (var i = 0; i < this.bypassKeys.length; i++) {
+		if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
+		else var keyName = this.keycodes[e.which];
 
-          if (this.keys[this.bypassKeys[i]]) {
-            bypass = true;
-            break
-          }
+		if (this.mapping[keyName]) keyName = this.mapping[keyName];
 
-        }
+		this.keypressEvent.key = keyName;
+		this.keypressEvent.original = e;
 
-      }
+		this.trigger("keypress", this.keypressEvent);
+	},
 
-      if (!bypass) {
-        // e.returnValue = false;
-        // e.keyCode = 0;
-        e.preventDefault();
-        e.stopPropagation();
-      }
+	blur: function (e) {
+		for (var key in this.keys) {
+			var state = this.keys[key];
 
-    }
+			if (!state) continue;
 
-    this.lastKey = keyName;
-
-  },
-
-  keyup: function(e) {
-
-    if (!this.enabled) return;
-
-    if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
-    else var keyName = this.keycodes[e.which];
-
-    if (this.mapping[keyName]) keyName = this.mapping[keyName];
-
-    this.any--;
-
-    this.keyupEvent.key = keyName;
-    this.keyupEvent.original = e;
-
-    this.keys[keyName] = false;
-
-    this.trigger("keyup", this.keyupEvent);
-
-  },
-
-  keypress: function(e) {
-
-    if (!this.enabled) return;
-
-    if (e.which >= 48 && e.which <= 90) var keyName = String.fromCharCode(e.which).toLowerCase();
-    else var keyName = this.keycodes[e.which];
-
-    if (this.mapping[keyName]) keyName = this.mapping[keyName];
-
-    this.keypressEvent.key = keyName;
-    this.keypressEvent.original = e;
-
-    this.trigger("keypress", this.keypressEvent);
-
-  },
-
-  blur: function(e) {
-
-    for (var key in this.keys) {
-
-      var state = this.keys[key];
-
-      if (!state) continue;
-
-      this.keyup({
-        which: this.keyToCode[key]
-      });
-
-    }
-
-  }
-
-
+			this.keyup({
+				which: this.keyToCode[key],
+			});
+		}
+	},
 };
 
 PLAYGROUND.Utils.extend(PLAYGROUND.Keyboard.prototype, PLAYGROUND.Events.prototype);

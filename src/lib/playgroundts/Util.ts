@@ -184,7 +184,7 @@ export function distance(x1: number, y1: number, x2: number, y2: number) {
 	}
 }
 
-export function sprintf(value: string, replace: string[]) {
+export function sprintf(value: string, replace: {[x:string]:string}) {
 	for (let key in replace) {
 		let find = new RegExp("{" + key + "}", "g");
 

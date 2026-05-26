@@ -5,14 +5,11 @@
 	let disconnected = $state(false);
 	let gameOver = $state(false);
 
-	var app =new  PLAYGROUND.Application({
-		
-	})
+	var app = new PLAYGROUND.Application({});
 </script>
 
-{@render children()}
-
 <canvas bind:this={canvas}></canvas>
+{@render children()}
 
 {#if disconnected}
 	<div class="modal border-window">

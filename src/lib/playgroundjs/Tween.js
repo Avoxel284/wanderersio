@@ -1,33 +1,26 @@
-PLAYGROUND.Tween = function(manager, context) {
+PLAYGROUND.Tween = function (manager, context) {
+	PLAYGROUND.Events.call(this);
 
-  PLAYGROUND.Events.call(this);
+	this.manager = manager;
+	this.context = context;
+	this.auto = true;
 
-  this.manager = manager;
-  this.context = context;
-  this.auto = true;
+	PLAYGROUND.Utils.extend(this, {
+		prevEasing: "linear",
+		prevDuration: 0.5,
+	});
 
-  PLAYGROUND.Utils.extend(this, {
-
-    prevEasing: "linear",
-    prevDuration: 0.5
-
-  });
-
-  this.clear();
-
+	this.clear();
 };
 
 PLAYGROUND.Tween.prototype = {
+	manual: function () {
+		this.auto = false;
 
-  manual: function() {
+		return this;
+	},
 
-    this.auto = false;
-
-    return this;
-
-  },
-
-  /* 
+	/* 
 
     Add an action to the end of the list
      
@@ -38,164 +31,136 @@ PLAYGROUND.Tween.prototype = {
 
   */
 
-  add: function(properties, duration, easing) {
+	add: function (properties, duration, easing) {
+		if (typeof duration !== "undefined") this.prevDuration = duration;
+		else duration = 0.5;
 
-    if (typeof duration !== "undefined") this.prevDuration = duration;
-    else duration = 0.5;
+		if (easing) this.prevEasing = easing;
+		else easing = "linear";
 
-    if (easing) this.prevEasing = easing;
-    else easing = "linear";
+		this.actions.push([properties, duration, easing]);
 
-    this.actions.push([properties, duration, easing]);
+		return this;
+	},
 
-    return this;
+	/* Clear animations */
 
-  },
+	clear: function () {
+		this.actions = [];
+		this.index = -1;
+		this.current = false;
 
-  /* Clear animations */
+		return this;
+	},
 
-  clear: function() {
+	/* Discard all other tweens associated with same context as ours */
 
-    this.actions = [];
-    this.index = -1;
-    this.current = false;
+	discard: function () {
+		this.manager.discard(this.context, this);
 
-    return this;
+		return this;
+	},
 
-  },
+	/* Alias for `add()` */
 
-  /* Discard all other tweens associated with same context as ours */
+	to: function (properties, duration, easing) {
+		return this.add(properties, duration, easing);
+	},
 
-  discard: function() {
+	/* Enqueue a method call */
 
-    this.manager.discard(this.context, this);
+	call: function (methodName, context) {
+		var action = ["call", methodName, context || this.context];
 
-    return this;
+		for (var i = 2; i < arguments.length; i++) action.push(arguments[i]);
 
-  },
+		this.actions.push(action);
 
-  /* Alias for `add()` */
+		return this;
+	},
 
-  to: function(properties, duration, easing) {
+	/* Mark the instance as being a repeated tween */
 
-    return this.add(properties, duration, easing);
+	loop: function () {
+		this.looped = true;
 
-  },
+		return this;
+	},
 
-  /* Enqueue a method call */
+	/* Add a repeat action for specified number of times */
 
-  call: function(methodName, context) {
+	repeat: function (times) {
+		this.actions.push(["repeat", times]);
 
-    var action = ["call", methodName, context || this.context];
+		return this;
+	},
 
-    for (var i = 2; i < arguments.length; i++) action.push(arguments[i]);
+	/* Add a wait action for specified number of miliseconds */
 
-    this.actions.push(action);
+	wait: function (time) {
+		this.actions.push(["wait", time]);
 
-    return this;
+		return this;
+	},
 
-  },
+	/* Alias for `wait()` */
 
-  /* Mark the instance as being a repeated tween */
+	delay: function (time) {
+		this.actions.push(["wait", time]);
 
-  loop: function() {
+		return this;
+	},
 
-    this.looped = true;
+	/* Remove this tween from the manager */
 
-    return this;
+	stop: function () {
+		this.manager.remove(this);
 
-  },
+		return this;
+	},
 
-  /* Add a repeat action for specified number of times */
+	/* Inserts the tween into the manager if not already inside. */
 
-  repeat: function(times) {
+	play: function () {
+		this.manager.add(this);
 
-    this.actions.push(["repeat", times]);
+		this.finished = false;
 
-    return this;
+		return this;
+	},
 
-  },
+	/* Performs last step in the animation list. */
 
-  /* Add a wait action for specified number of miliseconds */
+	end: function () {
+		var lastAnimationIndex = 0;
 
-  wait: function(time) {
+		for (var i = this.index + 1; i < this.actions.length; i++) {
+			if (typeof this.actions[i][0] === "object") lastAnimationIndex = i;
+		}
 
-    this.actions.push(["wait", time]);
+		this.index = lastAnimationIndex - 1;
+		this.next();
+		this.delta = this.duration;
+		this.step(0);
 
-    return this;
+		return this;
+	},
 
-  },
+	/* TBD */
 
-  /* Alias for `wait()` */
+	forward: function () {
+		this.delta = this.duration;
+		this.step(0);
+	},
 
-  delay: function(time) {
+	/* TBD */
 
-    this.actions.push(["wait", time]);
+	rewind: function () {
+		this.delta = 0;
+		this.step(0);
+	},
 
-    return this;
-
-  },
-
-  /* Remove this tween from the manager */
-
-  stop: function() {
-
-    this.manager.remove(this);
-
-    return this;
-
-  },
-
-  /* Inserts the tween into the manager if not already inside. */
-
-  play: function() {
-
-    this.manager.add(this);
-
-    this.finished = false;
-
-    return this;
-
-  },
-
-  /* Performs last step in the animation list. */
-
-  end: function() {
-
-    var lastAnimationIndex = 0;
-
-    for (var i = this.index + 1; i < this.actions.length; i++) {
-      if (typeof this.actions[i][0] === "object") lastAnimationIndex = i;
-    }
-
-    this.index = lastAnimationIndex - 1;
-    this.next();
-    this.delta = this.duration;
-    this.step(0);
-
-    return this;
-
-  },
-
-  /* TBD */
-
-  forward: function() {
-
-    this.delta = this.duration;
-    this.step(0);
-
-  },
-
-  /* TBD */
-
-  rewind: function() {
-
-    this.delta = 0;
-    this.step(0);
-
-  },
-
-  /* 
+	/* 
 
     Perform one animation step
    
@@ -207,209 +172,172 @@ PLAYGROUND.Tween.prototype = {
 
   */
 
-  next: function() {
+	next: function () {
+		this.delta = 0;
 
-    this.delta = 0;
+		this.index++;
 
-    this.index++;
+		if (this.index >= this.actions.length) {
+			if (this.looped) {
+				this.trigger("loop", {
+					tween: this,
+				});
 
-    if (this.index >= this.actions.length) {
+				this.index = 0;
+			} else {
+				this.manager.remove(this);
 
-      if (this.looped) {
+				return;
+			}
+		}
 
-        this.trigger("loop", {
-          tween: this
-        });
+		this.current = this.actions[this.index];
 
-        this.index = 0;
+		if (this.current[0] === "call") {
+			var args = this.current.slice(2);
 
-      } else {
+			var methodName = this.current[1];
+			var context = this.current[2];
+			var method = context[methodName];
 
-        this.manager.remove(this);
+			method.apply(context, args);
+		} else if (this.current[0] === "wait") {
+			this.duration = this.current[1];
+			this.currentAction = "wait";
+		} else {
+			/* calculate changes */
 
-        return;
+			var properties = this.current[0];
 
-      }
-    }
+			/* keep keys as array for 0.0001% performance boost */
 
-    this.current = this.actions[this.index];
+			this.keys = Object.keys(properties);
 
-    if (this.current[0] === "call") {
+			this.change = [];
+			this.before = [];
+			this.types = [];
 
-      var args = this.current.slice(2);
+			for (var i = 0; i < this.keys.length; i++) {
+				var key = this.keys[i];
+				var value = this.context[key];
 
-      var methodName = this.current[1];
-      var context = this.current[2];
-      var method = context[methodName];
+				if (typeof properties[key] === "number") {
+					value = value || 0;
 
-      method.apply(context, args);
+					this.before.push(value);
+					this.change.push(properties[key] - value);
+					this.types.push(0);
+				} else if (typeof properties[key] === "string" && properties[key].indexOf("rad") > -1) {
+					value = value || 0;
 
-    } else if (this.current[0] === "wait") {
+					this.before.push(value);
+					this.change.push(
+						PLAYGROUND.Utils.circWrappedDistance(value, parseFloat(properties[key])),
+					);
+					this.types.push(2);
+				} else {
+					value = value || "#000";
 
-      this.duration = this.current[1];
-      this.currentAction = "wait";
+					var before = cq.color(value);
 
-    } else {
+					this.before.push(before);
 
-      /* calculate changes */
+					var after = cq.color(properties[key]);
 
-      var properties = this.current[0];
+					var temp = [];
 
-      /* keep keys as array for 0.0001% performance boost */
+					for (var j = 0; j < 3; j++) {
+						temp.push(after[j] - before[j]);
+					}
 
-      this.keys = Object.keys(properties);
+					this.change.push(temp);
 
-      this.change = [];
-      this.before = [];
-      this.types = [];
+					this.types.push(1);
+				}
+			}
 
-      for (var i = 0; i < this.keys.length; i++) {
+			this.currentAction = "animate";
 
-        var key = this.keys[i];
-        var value = this.context[key];
+			this.duration = this.current[1];
+			this.easing = this.current[2];
+		}
+	},
 
-        if (typeof properties[key] === "number") {
+	/* TBD */
 
-          value = value || 0;
+	prev: function () {},
 
-          this.before.push(value);
-          this.change.push(properties[key] - value);
-          this.types.push(0);
+	/* Select an action if none is current then perform required steps. */
 
-        } else if (typeof properties[key] === "string" && properties[key].indexOf("rad") > -1) {
+	step: function (delta) {
+		this.delta += delta;
 
-          value = value || 0;
+		if (!this.current) this.next();
 
-          this.before.push(value);
-          this.change.push(PLAYGROUND.Utils.circWrappedDistance(value, parseFloat(properties[key])));
-          this.types.push(2);
+		switch (this.currentAction) {
+			case "animate":
+				this.doAnimate(delta);
+				break;
 
-        } else {
+			case "wait":
+				this.doWait(delta);
+				break;
+		}
+	},
 
-          value = value || "#000";
+	doAnimate: function (delta) {
+		this.progress = this.duration ? Math.min(1, this.delta / this.duration) : 1.0;
 
-          var before = cq.color(value);
+		var mod = PLAYGROUND.Utils.ease(this.progress, this.easing);
 
-          this.before.push(before);
+		for (var i = 0; i < this.keys.length; i++) {
+			var key = this.keys[i];
 
-          var after = cq.color(properties[key]);
+			switch (this.types[i]) {
+				/* number */
 
-          var temp = [];
+				case 0:
+					this.context[key] = this.before[i] + this.change[i] * mod;
 
-          for (var j = 0; j < 3; j++) {
-            temp.push(after[j] - before[j]);
-          }
+					break;
 
-          this.change.push(temp);
+				/* color */
 
-          this.types.push(1);
+				case 1:
+					var change = this.change[i];
+					var before = this.before[i];
+					var color = [];
 
-        }
+					for (var j = 0; j < 3; j++) {
+						color.push((before[j] + change[j] * mod) | 0);
+					}
 
-      }
+					this.context[key] = "rgb(" + color.join(",") + ")";
 
-      this.currentAction = "animate";
+					break;
 
-      this.duration = this.current[1];
-      this.easing = this.current[2];
+				/* angle */
 
-    }
+				case 2:
+					this.context[key] = PLAYGROUND.Utils.circWrap(this.before[i] + this.change[i] * mod);
 
+					break;
+			}
+		}
 
-  },
+		if (this.progress >= 1) {
+			this.next();
+		}
 
-  /* TBD */
+		if (this.listeners["step"]) {
+			this.trigger("step", {
+				tween: this,
+				dt: delta,
+			});
+		}
+	},
 
-  prev: function() {
-
-  },
-
-  /* Select an action if none is current then perform required steps. */
-
-  step: function(delta) {
-
-    this.delta += delta;
-
-    if (!this.current) this.next();
-
-    switch (this.currentAction) {
-
-      case "animate":
-        this.doAnimate(delta);
-        break;
-
-      case "wait":
-        this.doWait(delta);
-        break;
-
-    }
-
-  },
-
-  doAnimate: function(delta) {
-
-    this.progress = this.duration ? Math.min(1, this.delta / this.duration) : 1.0;
-
-    var mod = PLAYGROUND.Utils.ease(this.progress, this.easing);
-
-    for (var i = 0; i < this.keys.length; i++) {
-
-      var key = this.keys[i];
-
-      switch (this.types[i]) {
-
-        /* number */
-
-        case 0:
-
-          this.context[key] = this.before[i] + this.change[i] * mod;
-
-          break;
-
-          /* color */
-
-        case 1:
-
-          var change = this.change[i];
-          var before = this.before[i];
-          var color = [];
-
-          for (var j = 0; j < 3; j++) {
-            color.push(before[j] + change[j] * mod | 0);
-          }
-
-          this.context[key] = "rgb(" + color.join(",") + ")";
-
-          break;
-
-          /* angle */
-
-        case 2:
-
-          this.context[key] = PLAYGROUND.Utils.circWrap(this.before[i] + this.change[i] * mod);
-
-          break;
-      }
-    }
-
-    if (this.progress >= 1) {
-
-      this.next();
-
-    }
-
-    if (this.listeners["step"]) {
-
-      this.trigger("step", {
-        tween: this,
-        dt: delta
-      });
-
-    }
-
-  },
-
-  /* 
+	/* 
 
     Advances the animation if enough time has passed
    
@@ -418,30 +346,24 @@ PLAYGROUND.Tween.prototype = {
 
   */
 
-  doWait: function(delta) {
+	doWait: function (delta) {
+		if (this.delta >= this.duration) this.next();
+	},
 
-    if (this.delta >= this.duration) this.next();
+	onremove: function () {
+		this.trigger("finished", {
+			tween: this,
+		});
 
-  },
+		this.trigger("finish", {
+			tween: this,
+		});
 
-  onremove: function() {
-
-    this.trigger("finished", {
-      tween: this
-    });
-
-    this.trigger("finish", {
-      tween: this
-    });
-
-    this.finished = true;
-
-  }
-
+		this.finished = true;
+	},
 };
 
 PLAYGROUND.Utils.extend(PLAYGROUND.Tween.prototype, PLAYGROUND.Events.prototype);
-
 
 /* 
 
@@ -458,37 +380,32 @@ PLAYGROUND.Utils.extend(PLAYGROUND.Tween.prototype, PLAYGROUND.Events.prototype)
 
 */
 
-PLAYGROUND.TweenManager = function(app) {
+PLAYGROUND.TweenManager = function (app) {
+	this.tweens = [];
 
-  this.tweens = [];
+	if (app) {
+		this.app = app;
+		this.app.tween = this.tween.bind(this);
+	}
 
-  if (app) {
-    this.app = app;
-    this.app.tween = this.tween.bind(this);
-  }
+	this.delta = 0;
 
-  this.delta = 0;
-
-  this.app.on("step", this.step.bind(this));
-
+	this.app.on("step", this.step.bind(this));
 };
 
 PLAYGROUND.TweenManager.prototype = {
+	defaultEasing: "128",
 
-  defaultEasing: "128",
+	/* TBD */
 
-  /* TBD */
+	circ: function (value) {
+		return {
+			type: "circ",
+			value: value,
+		};
+	},
 
-  circ: function(value) {
-
-    return {
-      type: "circ",
-      value: value
-    };
-
-  },
-
-  /* 
+	/* 
 
     Marks the tween for removing.
    
@@ -499,19 +416,15 @@ PLAYGROUND.TweenManager.prototype = {
 
   */
 
-  discard: function(object, safe) {
+	discard: function (object, safe) {
+		for (var i = 0; i < this.tweens.length; i++) {
+			var tween = this.tweens[i];
 
-    for (var i = 0; i < this.tweens.length; i++) {
+			if (tween.context === object && tween !== safe) this.remove(tween);
+		}
+	},
 
-      var tween = this.tweens[i];
-
-      if (tween.context === object && tween !== safe) this.remove(tween);
-
-    }
-
-  },
-
-  /* 
+	/* 
 
     Create a new tween.
    
@@ -523,17 +436,15 @@ PLAYGROUND.TweenManager.prototype = {
   
   */
 
-  tween: function(context) {
+	tween: function (context) {
+		var tween = new PLAYGROUND.Tween(this, context);
 
-    var tween = new PLAYGROUND.Tween(this, context);
+		this.add(tween);
 
-    this.add(tween);
+		return tween;
+	},
 
-    return tween;
-
-  },
-
-  /* 
+	/* 
 
     Called each frame to update logic.
    
@@ -542,46 +453,37 @@ PLAYGROUND.TweenManager.prototype = {
    
   */
 
-  step: function(delta) {
+	step: function (delta) {
+		this.delta += delta;
 
-    this.delta += delta;
+		for (var i = 0; i < this.tweens.length; i++) {
+			var tween = this.tweens[i];
 
-    for (var i = 0; i < this.tweens.length; i++) {
+			if (!tween.auto) continue;
 
-      var tween = this.tweens[i];
+			if (!tween._remove) tween.step(delta);
 
-      if (!tween.auto) continue;
+			if (tween._remove) this.tweens.splice(i--, 1);
+		}
+	},
 
-      if (!tween._remove) tween.step(delta);
+	/* Add a tween to internal list. */
 
-      if (tween._remove) this.tweens.splice(i--, 1);
+	add: function (tween) {
+		tween._remove = false;
 
-    }
+		var index = this.tweens.indexOf(tween);
 
-  },
+		if (index === -1) this.tweens.push(tween);
+	},
 
-  /* Add a tween to internal list. */
+	/* Marks a tween for removing during next step(). */
 
-  add: function(tween) {
+	remove: function (tween) {
+		if (tween._remove) return;
 
-    tween._remove = false;
+		tween._remove = true;
 
-    var index = this.tweens.indexOf(tween);
-
-    if (index === -1) this.tweens.push(tween);
-
-  },
-
-  /* Marks a tween for removing during next step(). */
-
-  remove: function(tween) {
-
-    if (tween._remove) return;
-
-    tween._remove = true;
-
-    tween.onremove();
-
-  }
-
+		tween.onremove();
+	},
 };

@@ -1,6 +1,17 @@
 import type Application from "./Application";
 import Events from "./Events";
-import type { PlaygroundMouseEvent } from "./Interfaces";
+
+export interface PlaygroundMouseEvent {
+	x: number;
+	y: number;
+	deltaX?: number;
+	deltaY?: number;
+	button?: string;
+	original: MouseEvent;
+	id: number;
+	touch?: boolean;
+	wheelDelta?: number;
+}
 
 class Mouse extends Events {
 	app: Application;
@@ -9,13 +20,13 @@ class Mouse extends Events {
 	x = 0;
 	y = 0;
 
-	lastMouseMoveData?:PlaygroundMouseEvent  ;
+	lastMouseMoveData?: PlaygroundMouseEvent;
 
-	lastMouseDownData?:PlaygroundMouseEvent  ;
+	lastMouseDownData?: PlaygroundMouseEvent;
 
-	lastMouseUpData?:PlaygroundMouseEvent  ;
+	lastMouseUpData?: PlaygroundMouseEvent;
 
-	lastMouseWheelData?:PlaygroundMouseEvent  ;
+	lastMouseWheelData?: PlaygroundMouseEvent;
 
 	buttons: { [button: string]: boolean } = {};
 
@@ -24,29 +35,26 @@ class Mouse extends Events {
 	element: HTMLElement;
 	disableContextMenu = true;
 
-	constructor(app: Application, element: HTMLElement) {
+	constructor(app: Application) {
 		super();
 
 		this.app = app;
-
-		this.element = element;
+		this.element = app.container;
 
 		// if (app.mouseThrottling) {
 		// 	this.mousemove = PLAYGROUND.Utils.throttle(this.mousemove, app.mouseThrottling);
 		// }
 
-		element.addEventListener("mousemove", this.handleMouseMove);
-		element.addEventListener("mousedown", this.handleMouseDown);
-		element.addEventListener("mouseup", this.handleMouseUp);
-		element.addEventListener("mouseout", this.handleMouseOut);
-		element.addEventListener("contextmenu", this.handleContextMenu);
+		this.element.addEventListener("mousemove", this.handleMouseMove);
+		this.element.addEventListener("mousedown", this.handleMouseDown);
+		this.element.addEventListener("mouseup", this.handleMouseUp);
+		this.element.addEventListener("mouseout", this.handleMouseOut);
+		this.element.addEventListener("contextmenu", this.handleContextMenu);
 
-		this.enableMousewheel();
-
-		element.requestPointerLock =
-			element.requestPointerLock ||
-			(element as any).mozRequestPointerLock ||
-			(element as any).webkitRequestPointerLock;
+		this.element.requestPointerLock =
+			this.element.requestPointerLock ||
+			(this.element as any).mozRequestPointerLock ||
+			(this.element as any).webkitRequestPointerLock;
 
 		document.exitPointerLock =
 			document.exitPointerLock ||
@@ -79,21 +87,14 @@ class Mouse extends Events {
 
 	private handleMouseMove(event: MouseEvent) {
 		if (!this.enabled) return;
-		this.lastMouseMoveData= {
+		this.lastMouseMoveData = {
 			x: ((event.pageX - this.elementOffset.x - this.app.offsetX) / this.app.scale) | 0,
-			y :
-			((event.pageY - this.elementOffset.y - this.app.offsetY) / this.app.scale) | 0,
+			y: ((event.pageY - this.elementOffset.y - this.app.offsetY) / this.app.scale) | 0,
 			original: event,
-			deltaX:
-				event.movementX || (event as any).mozMovementX || (event as any).webkitMovementX || 0,
-				deltaY: event.movementY || (event as any).mozMovementY || (event as any).webkitMovementY || 0
-				,id: 255,
-
+			deltaX: event.movementX || (event as any).mozMovementX || (event as any).webkitMovementX || 0,
+			deltaY: event.movementY || (event as any).mozMovementY || (event as any).webkitMovementY || 0,
+			id: 255,
 		};
-
-
-
-
 
 		// if (this.app.mouseToTouch) {
 		// 	// //      if (this.left) {
@@ -109,12 +110,13 @@ class Mouse extends Events {
 		if (!this.enabled) return;
 
 		let buttonName = ["left", "middle", "right"][event.button];
-
-		this.lastMouseDownData.x = this.lastMouseMoveData.x;
-		this.lastMouseDownData.y = this.lastMouseMoveData.y;
-		this.lastMouseDownData.button = buttonName;
-		this.lastMouseDownData.original = event;
-		this.lastMouseDownData.id = 255;
+		this.lastMouseDownData = {
+			x: this.lastMouseMoveData?.x || 0,
+			y: this.lastMouseMoveData?.y || 0,
+			button: buttonName,
+			original: event,
+			id: 255,
+		};
 
 		// if (this.app.mouseToTouch) {
 		// this.trigger("touchmove", this.mousedownEvent);
@@ -123,9 +125,9 @@ class Mouse extends Events {
 		this.emit("mousedown", this.lastMouseDownData);
 		// }
 
-		this.emit("keydown", {
-			key: "mouse" + buttonName,
-		});
+		// this.emit("keydown", {
+		// 	key: "mouse" + buttonName,
+		// });
 	}
 
 	private handleMouseUp(event: MouseEvent) {
@@ -134,12 +136,13 @@ class Mouse extends Events {
 		let buttonName = ["left", "middle", "right"][event.button];
 
 		if (!this.buttons[buttonName]) return;
-
-		this.lastMouseUpData.x = this.lastMouseMoveData.x;
-		this.lastMouseUpData.y = this.lastMouseMoveData.y;
-		this.lastMouseUpData.button = buttonName;
-		this.lastMouseUpData.original = event;
-		this.lastMouseUpData.id = 255;
+		this.lastMouseUpData = {
+			x: this.lastMouseMoveData?.x || 0,
+			y: this.lastMouseMoveData?.y || 0,
+			button: buttonName,
+			original: event,
+			id: 255,
+		};
 
 		// if (this.app.mouseToTouch) {
 		// 	this.emit("touchend", this.mouseupEvent);
@@ -147,105 +150,120 @@ class Mouse extends Events {
 		this.emit("mouseup", this.lastMouseUpData);
 		// }
 
-		this.emit("keyup", {
-			key: "mouse" + buttonName,
-		});
+		// this.emit("keyup", {
+		// 	key: "mouse" + buttonName,
+		// });
 
 		this.buttons[buttonName] = false;
 	}
 
 	private handleMouseWheel(event: WheelEvent) {
-		this.lastMouseWheelData.x = this.lastMouseMoveData.x;
-		this.lastMouseWheelData.y = this.lastMouseMoveData.y;
-		this.lastMouseWheelData.button = ["none", "left", "middle", "right"][event.button];
-		this.lastMouseWheelData.original = event;
-		this.lastMouseWheelData.id = 255;
+		let buttonName = ["left", "middle", "right"][event.button];
+		this.lastMouseWheelData = {
+			x: this.lastMouseMoveData?.x || 0,
+			y: this.lastMouseMoveData?.y || 0,
+			button: buttonName,
+			original: event,
+			id: 255,
+		};
 
 		this.buttons[event.button] = false;
 
 		this.emit("mousewheel", this.lastMouseWheelData);
-		this.emit("keydown", {
-			key: event.deltaY > 0 ? "mousewheelup" : "mousewheeldown",
-		});
+		// this.emit("keydown", {
+		// 	key: event.deltaY > 0 ? "mousewheelup" : "mousewheeldown",
+		// });
 	}
 
-	enableMousewheel() {
-		var eventNames =
+	initialize() {
+		const eventNames =
 			"onwheel" in document || (document as any)?.documentMode >= 9 ?
 				["wheel"]
 			:	["mousewheel", "DomMouseScroll", "MozMousePixelScroll"];
-		var callback = this.handleMouseWheel.bind(this);
-		var self = this;
 
-		var throttled = PLAYGROUND.Utils.throttle(function (event: WheelEvent) {
-			var orgEvent = event || window.event,
-				args = [].slice.call(arguments, 1),
-				delta = 0,
-				deltaX = 0,
-				deltaY = 0,
-				absDelta = 0,
-				absDeltaXY = 0,
-				fn;
-
-			// orgEvent.type = "mousewheel";
-
-			// Old school scrollwheel delta
-			if (orgEvent.deltaY) {
-				delta = orgEvent.deltaY;
-			}
-
-			if (orgEvent.detail) {
-				delta = orgEvent.detail * -1;
-			}
-
-			// New school wheel delta (wheel event)
-			if (orgEvent.deltaY) {
-				deltaY = orgEvent.deltaY * -1;
-				delta = deltaY;
-			}
-
-			// Webkit
-			if ((orgEvent as any).wheelDeltaY !== undefined) {
-				deltaY = (orgEvent as any).wheelDeltaY;
-			}
-
-			var result = delta ? delta : deltaY;
-
-			self.lastMouseWheelData.x = self.lastMouseMoveData.x;
-			self.lastMouseWheelData.y = self.lastMouseMoveData.y;
-			self.lastMouseWheelData.delta = result / Math.abs(result);
-			self.lastMouseWheelData.original = orgEvent;
-
-			callback({ ...event, ...self.lastMouseMoveData });
-
-			orgEvent.preventDefault();
-		}, 40);
-
-		for (var i = eventNames.length; i; ) {
-			self.element.addEventListener(
-				eventNames[--i],
-				function (event) {
-					throttled(event);
-
-					var prevent = !PLAYGROUND.Utils.classInParents(event.target, "scroll");
-
-					if (prevent) {
-						event.preventDefault();
-						event.stopPropagation();
-					}
-				},
-				false,
-			);
-			/*
-            self.element.addEventListener(eventNames[--i], function(event) {
-
-              e.preventDefault();
-              e.stopPropagation();
-
-            });
-            */
-		}
+		let orgEvent = event || window.event,
+			args = [].slice.call(arguments, 1),
+			delta = 0,
+			deltaX = 0,
+			deltaY = 0,
+			absDelta = 0,
+			absDeltaXY = 0,
+			fn;
 	}
+
+	// enableMousewheel() {
+	// 	let callback = this.handleMouseWheel.bind(this);
+	// 	let self = this;
+
+	// 	var throttled = PLAYGROUND.Utils.throttle(function (event: WheelEvent) {
+	// 		var orgEvent = event || window.event,
+	// 			args = [].slice.call(arguments, 1),
+	// 			delta = 0,
+	// 			deltaX = 0,
+	// 			deltaY = 0,
+	// 			absDelta = 0,
+	// 			absDeltaXY = 0,
+	// 			fn;
+
+	// 		// orgEvent.type = "mousewheel";
+
+	// 		// Old school scrollwheel delta
+	// 		if (orgEvent.deltaY) {
+	// 			delta = orgEvent.deltaY;
+	// 		}
+
+	// 		if (orgEvent.detail) {
+	// 			delta = orgEvent.detail * -1;
+	// 		}
+
+	// 		// New school wheel delta (wheel event)
+	// 		if (orgEvent.deltaY) {
+	// 			deltaY = orgEvent.deltaY * -1;
+	// 			delta = deltaY;
+	// 		}
+
+	// 		// Webkit
+	// 		if ((orgEvent as any).wheelDeltaY !== undefined) {
+	// 			deltaY = (orgEvent as any).wheelDeltaY;
+	// 		}
+
+	// 		var result = delta ? delta : deltaY;
+
+	// 		self.lastMouseWheelData.x = self.lastMouseMoveData.x;
+	// 		self.lastMouseWheelData.y = self.lastMouseMoveData.y;
+	// 		self.lastMouseWheelData.delta = result / Math.abs(result);
+	// 		self.lastMouseWheelData.original = orgEvent;
+
+	// 		callback({ ...event, ...self.lastMouseMoveData });
+
+	// 		orgEvent.preventDefault();
+	// 	}, 40);
+
+	// 	for (var i = eventNames.length; i; ) {
+	// 		self.element.addEventListener(
+	// 			eventNames[--i],
+	// 			function (event) {
+	// 				throttled(event);
+
+	// 				var prevent = !PLAYGROUND.Utils.classInParents(event.target, "scroll");
+
+	// 				if (prevent) {
+	// 					event.preventDefault();
+	// 					event.stopPropagation();
+	// 				}
+	// 			},
+	// 			false,
+	// 		);
+	// 		/*
+	//         self.element.addEventListener(eventNames[--i], function(event) {
+
+	//           e.preventDefault();
+	//           e.stopPropagation();
+
+	//         });
+	//         */
+	// 	}
+	// }
 }
 
 export default Mouse;
